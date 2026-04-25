@@ -1,0 +1,32 @@
+Link to official guide: https://developer.arm.com/documentation/101811/0105/Overview
+
+Virtual Address vs Physical Address
+
+Advantages of Virtual Address:
+	Software walo ko ye pata rehne ki zaroorat nhi ki konsi exact physical address par jayega data
+	OS can control konsa process konsi wali Memory location ko access kr sakta hai
+	Ho sakta hai process ko lag raha hai continuous location acces ho rhi hai, par vo physically distributed ho
+
+There are mappings of Virtual to Physical Address: these are page tables
+	These are not static and may change by OS based on requirements
+
+Address Spaces:
+	EL Exception Levels: Priviledge levels, jitna jyada utni jyada shaktiyan
+	Typical ELs:
+		EL0: Application Software:  Can only see virtual address, cannot decide Hardware resources
+		EL1: OS or Kernel level: Decides page table for EL!
+		EL2: Hypervisor: Multiple OS, Virtual machines
+		EL3: Secure monitor
+ 	At EL0 there would be 2 levels of transaltion, one by EL1, other by EL2 table
+	These are called stages of transaltion
+	when one time it is transalted, OS thinks it is PA, but it is IPA intermdiate physical address
+	The hypervisor tables of second stage translate IPA to PA
+	Each Virtual address space has settings and tables called translation Regimes
+
+Physical address spaces
+	4 types:Non Secure, Secure, Realme, Root
+	Each processoris in the state, name same as these 4
+	based on the state, it is decided which of the PAS are accessible for the system
+	
+		
+
