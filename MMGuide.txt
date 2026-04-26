@@ -28,5 +28,57 @@ Physical address spaces
 	Each processoris in the state, name same as these 4
 	based on the state, it is decided which of the PAS are accessible for the system
 	
-		
+Address space size
+	64 Bit ISA, 64 bits registers used, so depending on the EL, this space is divided
+	Virtual Address Space size
+		Divided into Kernel Space and User space etc, depending upon register values
+		Jitni space hogi us hisab se page tables banegi, har space ki alag alag
+	Physical Address space is implementation defined	
 
+Address Space is like VIP lounge, and ELn is like VIP pass whether I can access that space or not
+
+TTBR-> Translation Table Base register: From where will the translation table begin
+
+E2H-> Hypervisor can run OS in EL2 itself, does not need to go to EL1		
+
+Address space Identifiers
+	One addess say 0x8000 can be translated to different PA depending on the which application is currently running
+	Hence address space identifiers are used which tell which translation to use
+	nG (no global) flag tells if asid needs to be used, kernel space ones will not have asid
+	2 TTBR registers, TTBR0_EL1 and TTBR1_EL1
+
+VMID: Tells which Virtual machine is the owner of the process
+	Each Virtual machine OS thinks it is different hardware itself, it works that way
+	So in those cases 2 VMs can assign same ASID to a process, hence combination of ASID and VMID is used for differentiation
+	ASID is managed by guest OS, VMID is managed by Hypervisor
+	VMID is like ASID, stored in VTTBR_EL2 registers, used by Hypervisor for stage 2 translation
+
+Common Not Private Bit:
+	There can be multiple PE(Processing Elements) and they can have different ASID VMID mappings.
+	This flag tells if different PEs will assign same ASID for same process so the TLB can be shared
+
+Memory Management Unit: This deals with all this translation stuff
+	Translation Table: Each memory divided into blocks or pages
+	Table entry point which block of Virtual Address is mapped to which block in PA
+	Each VA is divided into Block address and Offset. Block address is given to page table which gives PA base address and atributes
+	This base address added to offset gives the PA
+	This translation can occur in multiple levels (not talking about IPA->PA)
+		VA is divided into bigger blocks, less bits required for decoding, then these are again divided into blocks and so on
+	TCR: Translation Control Register
+		TOSZ, T1SZ:  tells how many address bits are valid, this decides levels to be used in translation
+		TG0 TG1: Decides the size of the page
+		There are other bits as well telling ASID size, IPA size etc
+	Using TCR registers numbers of levels of translation are determined
+	TTBR: Where to begin translations, TCR: How the translation would follow
+
+Translation Granules:
+	TnSZ defines the size of address space, TGn decides the page size
+	These two together decides the starting address and the sizes of the page tables, example given in the website
+
+TLB: Translation Lookaside buffer:
+	Interpretation of the recently translated pages, doesnt contain full page tables, contains info of all the registers discussed
+	If Tables change, entries in TLB should be invalidated
+
+
+
+ 
