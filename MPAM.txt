@@ -1,0 +1,40 @@
+MPAM:  Memory System Resourse partitioning and mapping
+
+Arm Documentation: https://developer.arm.com/documentation/107768/0101/Arm-Memory-System-Resource-Partitioning-and-Monitoring--MPAM--Extension?lang=en
+
+Allows software to control system resources allocation during runtime
+
+Memory System Resource Partitioning
+	Memory system can be shared among multiple VMs, OS, Applications. Resource partitioning controls and limits the usage of memory resources like caches, interconnects, memory controllers
+	If I consider cache as an example, can are partioned and then allcated according to the partition Ids
+
+Memory system resource usage monitoring
+	Dynamically changing the partitioning based on usage
+	Logging data, monitoring anomalous behavior
+
+Examples where MPAM can be useful
+	There can be a case where earlier there were separate processing elements for 2 tasks, now there is one. So both thpse two can be assigned partitioned resources without each disturbing the other
+	Multiple VMs can be run simultaneously. One may try to consume more resources than it is allocated, which would be detected using the monitoring
+	
+
+How does MPAM work
+	There is an MPAM requester which sends MPAM information bundle
+	MPAM information bundle contains the follwing
+		Partition ID Number: PartID
+		Performance Monitoring Group
+		Partition ID Space
+	This information bundle is sent the downstream memory system component
+
+	Part ID: This is a unique number which is given to each VM/OS/Applications assigned by PartID space manager
+	There are 2 versions of MPAM, in MPAMv1, there were separate partID for data and instruction. In v2, there is one partId and one alternate partID
+	Part ID Space, PartId_NS:  secure space or non secured state
+	PMG: Performance monitoring group. It is also like an classifier on basis of which performace of each PMG would be monitored
+	PartID decides where the traffic may consume resources. PMG is who gets charged for the traffic. PartID is like permission. PMG is like this has happened who was responsible
+	Part ID affects behavior, PMG affects observation. There are MPAM monitor hardware t monitor based on PMG
+	If only single Id was used, there would be lots of partitions, but here there may be multiple PMGs inside few partitions, making them separately being hadled
+
+	A partID space manager is a sofware which assigns PartID and PMG to VMs/OS/Applications
+
+This MPAM information is passed on to all MSC Memory system components
+
+MPMA virtualisation:  Guest OS sends virtual MPAM information bundle, Hypervisor Maps them to correct/physical IDs
