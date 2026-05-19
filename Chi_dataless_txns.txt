@@ -1,0 +1,43 @@
+CHI Dataless Transactions
+
+General terms before the transactions
+	Clean: memory is updated with the latest data
+	invalid: I dont have this cache line anymore
+	Shared: Multiple CPU cache can have this cache line
+	Unique: Only I am the owner of this cache line
+	Dirty: I am responsible for updating the memory
+	Stash:  add this cache line to others cache
+	Sep: Give separate responses, one usually for coherency and other for completion
+
+Dataless Transactions: When RN does not directly send/recieve data. There may be data transfer because of these transactions
+
+	Clean Invalid : whoever has the data, Write it back in memory, whoever has this line, invalidate it
+	Clean Invalid PoPA: same as above, bu data is written to a non volatile storage instead of memory
+
+	MakeInvalid: Everyone remove this cache line from your cache
+	
+	Clean Shared: Clean the data, but let it be shared
+	Clean Shared persist:  Same as above, but write in non vlatile memory
+	Clean shared persist sep: same as above, but there would be separate responses to avoid unncessary latency dur to memory access
+
+	Clean Unique: Clean the dirty data and make me the only owner
+	Make Unique: Make me the owner of the data, everyone else invalidate, I dont care about the cleanliness
+
+	Evict: I dont want to keep this cache line any more
+
+	StashOnceUnique: Send this cache line to other CPU and give it permission
+	StashOnceSepUnique: Same as above, but there would be 2 responses
+	StashOnceShared: Send this cache line to that CPU, but let the cache be shared
+	StashOnceSepShared: Same as above but 2 responses
+
+There are other points to keep in mind:
+	Stash transactions are not required by the IP to be accepted
+	Make unique can also ask for data if it already is not in shared state
+	Make invalid can also transfer data if there is a dirty cache line but this is not the primary goal of this transaction. Similar for Evict
+	This is because we dont want to loose data in dirty cache line
+
+Cases where dataless transactions can transfer data
+	Stash*: when stash are accepted and the slave doesnt already have the data
+	*Unique: when the initiator doesnt already have cache in Shared state
+	Clean*: If the cache line is dirty in any of the CPU
+	*Invalid/Evict: It is not necessary it would happen but ideally to mantain coherency this data should be written samewhere HN/InterconnectCache/Memory
