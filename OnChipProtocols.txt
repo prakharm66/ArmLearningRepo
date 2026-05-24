@@ -1,0 +1,49 @@
+Resources: ArmDocs, Perplexity, Google Gemini
+https://developer.arm.com/documentation/102202/0300/What-is-AMBA--and-why-use-it-
+
+Protocols:
+APB: (Advanced Peripheral Bus)
+	-Simple for low speed peripherals, two cycles for each transfer. Address phase and data phase, PSel and PEnable signal in each phase. 
+	-Earlier there was no ready and strobe signals as well, were added afterwards. No Burst, single data transfers
+
+AHB: (Advanced high performance Bus)
+	-Separate Address and Dataphases which can overlap, there can be address of one and data of other at single time, hence pipelined
+	-Concept of burst/size/trans introduced. hBurst defines which type of burst it is, HSize defines how much big data would be sent
+	-Address needs to be aligned according to hSize. In one beat only one data of HSize (2^HSIZE bytes) will be transferred
+	-high speed as pipelined(twice as fast), and burst type lets the slave to prefetch or be ready that more data is coming, and hence fast
+
+AXI: (Arm Extensible Interface)
+	-In AHB it was shared bus, all masters and slaves connected to single bus with MUX and Demux units. AXI is point to point and routing and arbitration is handled by the interconnect
+	-In AHB if a read was going one, Write wires are ideal, AXI has 5 separate channels, each with different valid ready handshake and can be functional simultaneously.
+	-There can be out of order execution, again handled by interconnect. There are transaction IDs, AxID which help in telling which response is of which transfer
+	-Multiple masters can talk to multiple slaves simulataneously, again handled by the interconnect. Extra Ids can be appended by interconnect to deal with this
+	-AXI is faster but require more logic for interconnect and hence can be avoided in cases like config registers
+	-Response ordering: responses can come in any order if IDs are different. if Id are same, then those responses must come in order
+	-In address channel only one address needs to be sent, others are calculated by the slave. Write receives one response when whole burst is complete, read receives response on each beat
+
+	AXI stream:
+	
+
+
+	ACE: (Arm Coherent Extension)
+	- AXI was good for non coherent systems, but to mantain coherency between various CPU caches, it required multiple transactions like reading the data to gain ownership
+	- It still cannot use other CPU's data, have to store everything back to memory so that other CPU can use it
+	- ACE introduces additional channels for coherency related signals like snooping etc which the interconnect must handle
+	- These snooping signals/ snoop directory can be used to maintain coherency as well share memory
+	- There can be cacheless masters(periherals) but which wants to communcate with interconnect which has masters with cache, they use acelite
+
+
+CHI:
+
+
+Others:
+	QCH:
+
+
+	ATB:
+
+
+	DTI:
+
+
+
