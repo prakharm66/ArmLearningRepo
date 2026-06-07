@@ -22,7 +22,10 @@ AXI: (Arm Extensible Interface)
 	-In address channel only one address needs to be sent, others are calculated by the slave. Write receives one response when whole burst is complete, read receives response on each beat
 
 	AXI stream:
-	
+	- This was developed for IPs which just flush large chunks of Data in one direction, like camera data sent to ISP or Video Frames etc
+	- They is just single channel, infinite burst length, no address decoding.
+	- No Size signal, valid bits are told using Strobe or Keep signals
+	- Combination of strobe and keep bits tells the type of byte, position/data/Null byte
 
 
 	ACE: (Arm Coherent Extension)
@@ -37,10 +40,12 @@ CHI:
 
 
 Others:
-	QCH:
+	QCH: 
+	- This is a standard use to communicate the Clock/Power gating request
+	- There is a FSM which is followed, a master like a PMIC sends Q State request, the slave either accepts the request or rejects it
+	- It accepts it and goes in Q State. Then to come back, the request is deasserted and slave comes out of Q State
 
-
-	ATB:
+	ATB: (Arm Trace Buffer)
 
 
 	DTI:
