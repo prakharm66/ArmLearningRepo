@@ -1,0 +1,28 @@
+Error Correction Code
+
+Parity: Even parity-odd parity
+	Can be used to detect one bit flip or odd number of bit flips
+	would fail in even flips and also cannot tell which bit flip occured
+
+Error Correction Code:  Extra bits added along with original data which tells which bit got flipped
+	has limitations, have to add many bits if we want to get more accuracy
+
+Hamming distance: how many bits are different among two data points
+
+There are code words used in hamming code
+	if minimum distance between the code words is d, then
+	It can detect d-1 errors and can correct floor((d-1)/2) errors
+	For k bit word, m parity bits can be used for 1 bit correction if 2^m > m + k + 1
+
+SECDED: Single error correction, double error detection code
+
+Hamming Error Correction Code
+	H matrix: which all bits would be used to find the syndrome
+	If a k bit word is to be assigned p parity bits, then the H matrix would be (k+p) x p
+	This matrix would be used to generate the parity bits in the first place.
+	Then at the slave, k bit word and p bit parity would again be multiplied with H matrix to find syndrome
+	Sydrome would tell which bit got flipped, depending on whicever column is same as the syndrome
+
+ 
+
+	
