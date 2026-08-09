@@ -1,0 +1,47 @@
+FuSa:  Functional Safety
+How does the chip responds when there is a software or hardware fault
+Functional safety ensures system responds correctly in case of error, either tell or correct
+
+Basic Chain for Harm:
+Fault -> Error -> Failure -> Hazard -> Possible harm
+FuSa tries to break this chain as early as possible
+Terms- 
+	Fault: Defect or abnormal condition
+	Error: incorrect state because of the fault
+	failure: System does not performs required behavior
+	hazard: Potentially dangerous condition	
+
+Core Lifecycle: Detect -> Contain -> Recover
+	Detect: Parity, Watchdog timer
+	Contain/Isolation:  Poison Machanism
+	Recover: Error Correction or controlling the fault
+
+FTTI: Fault Tolerant time interval, time before which fault should be detected and controled
+
+Hardware Faults:
+	-Systematic faults:
+		Design Bugs, Spec Errors, 
+	-Random Errors:
+		-Transient: Due to temperature, cosmic rays, supply voltage
+		-Permanent: Stuck at faults, hardware damage
+
+Key points which I can see in NoC: DataECC, Parity, CRC, Wathdog Timer(latency monitor? Timeout mechanism), Poison Mechanism, Reporting mechanism: CSR ?
+
+Watchdog: There is a sort of heartbeat, if there is delay in heartbeat, then watchdog generates interuupt
+Latency monitor: Start for something till end of something, that timestamp
+Lockstep: 2 cores doing same thing, if there outputs are different then intereupt 
+Redundancy: Mutiple cores for same tasks in case any of them fails, other can take over
+
+Accuracy related faults:
+	Single bit flip :
+	Multi bit flip
+	Cross talk
+	Stuck at faults
+
+Timing related faults:
+	Late response/deadline miss -> watchdog
+	Early response/Eagerness -> credit based mechanism
+	Message Lost/Ommited -> Sequence counters / QoS
+	Ordering Violations -> Sequence counters / QoS
+
+
