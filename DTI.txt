@@ -1,0 +1,27 @@
+DTI: Distributed translation interface
+
+Components in SMMUv3 interface:
+	TCU: Translation Control Unit
+	TBU: Translation Buffer Unit
+	PCIe Root Port with Address Translatio Service support
+	DTI Interconnect
+
+DTI protocol is of two types: 
+	Between TBU and TCU
+	Between PCIe Root Port with TCU
+
+Where DTI interconnect comes-> between TBU and TCU, or a PCIE root which would communicate to TCU
+
+There are two main parts: DTI Masters or TBU, DTI slaves or TCU
+From Master to TCU it is downstream, from TCU to master is is Upstream
+
+Each transfer can be divided into message type and payload, with fixed defined widths
+
+Messages can be of multiple types
+	Connect/Disconnect : Power Domain and credit bargain mechanism
+	Translation Request
+	Invalidation and Synchronisation
+	Register Access
+	Page Request
+	
+
