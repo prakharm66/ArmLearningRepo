@@ -23,5 +23,15 @@ Messages can be of multiple types
 	Invalidation and Synchronisation
 	Register Access
 	Page Request
+
+Flow Control
+	Tokens: How many outstanding messages of a group are allowed
+	Request consumes tokens and response return them
+	Ids are used to track outstanding transactions, unique per transaction
+	
+DTI Connections:
+	Channel states: Disconn, connec, req_connect, req_disconnect, requests are send by _M
+	DTI channels are point to point, if there are multiple TBU, each TBU TCU connection would have separate channel
+
 	
 
