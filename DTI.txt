@@ -1,5 +1,9 @@
 DTI: Distributed translation interface
 
+Chatgpt: https://chatgpt.com/share/6a7cc013-b8b0-83ee-bab6-a5bd0a96eeb1
+Gemini: https://share.gemini.google/JZu9y6HM9zV5
+Arm Wesite: https://support.arm.com/documentation/ihi0088/j/
+
 Components in SMMUv3 interface:
 	TCU: Translation Control Unit
 	TBU: Translation Buffer Unit
@@ -33,5 +37,12 @@ DTI Connections:
 	Channel states: Disconn, connec, req_connect, req_disconnect, requests are send by _M
 	DTI channels are point to point, if there are multiple TBU, each TBU TCU connection would have separate channel
 
+DTI interconnect:
+	The protocol level things of extracting fields from message is work of endpoints, not interconnect
+	Major work of it would be arbiteration of requests from multiple masters and demux the responses
+	it needs to ensure all beats of transaction are transported before next TBUs message can start, maybe bring ready low for other TBUs
+	But this does not mean that only one channel tell tokens get over
+	Token and states are responsibility of the endpoints
+	Interconnect must mantain ordering, atleast for a transactions, and for transactions in same channel, but not sure among different channels
 	
 
