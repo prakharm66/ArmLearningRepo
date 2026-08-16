@@ -1,0 +1,58 @@
+Reliability, Availability, Servicable
+
+Arm DoC: https://support.arm.com/documentation/110247/101/Introduction-to-RAS?lang=en
+https://support.arm.com/documentation/107790/0100/Introduction-to-RAS
+Chatgpt conversation: https://chatgpt.com/share/6a82028b-8fd4-83e8-89d7-8667f1eadd73
+
+
+Detection -> Correction -> Containment -> Recovery -> Reporting -> Fault handling
+
+Main features in RAS:
+	Error Detection: ECC, Parity
+	Error Correction/Recovery: 
+	Error Containment: Preventing Error from propagating
+	Fault Handling: Interrupts
+
+Error Detection:
+	Data Integrity: ECC, Parity, CRC
+	Functional Checking: Redundancy, Range, Protocol violation
+	temporal: watchdog timers
+
+Three types of errors:
+	Corrected CE:
+	Deferred DE: Not corrected as of now, system decided it can continue, postponed
+	Uncorrected UE: Cannot correct
+
+Error Recording: 
+	Each element in a RAS system is node, where the detection and recording happens
+	Each node has multiple error detection record which contains:
+		Error Code
+		Address of associated memory region
+		Frequency Counters
+		Interrupts to be generated
+
+Error containment:
+	Data Poison: Data sent with a flag: system receiving poisoned data would reject the data and generate interrupt
+	This would be used as warning by other application processors as well
+
+Error reporting:
+	Based on the types of errors, different interrupts are generated:
+		FHI: Fault Handling Interrupts: CE or DE
+		ERI: Error Recovery Interrupts: UE
+		CEI: Critical Error Interrupts: When Error are critical
+
+RAS in Interconnect:
+	Error Detection/Correction: ECC/Parity/CRC
+	Error Classification: CE/DE/UE
+	Error Logging:
+		Local error records:Memory mapped registers
+	Interrupt generation based in the type of error
+	Poisoning the data if it is corrupted
+	Pseudo Fault generation: Mimic error scenario to check if system is working fine
+
+RAS in MMU:
+	Error correction applied for cache/memory/translation tables
+	Error logging:
+	Error containment:
+	Interrupt generation: could be because of error in page table data or control
+
