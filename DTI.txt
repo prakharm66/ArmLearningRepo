@@ -2,6 +2,7 @@ DTI: Distributed translation interface
 
 Chatgpt: https://chatgpt.com/share/6a7cc013-b8b0-83ee-bab6-a5bd0a96eeb1
 Gemini: https://share.gemini.google/JZu9y6HM9zV5
+Perplexity: https://www.perplexity.ai/search/5cb03618-d150-4c86-bde1-8e7c24079315
 Arm Wesite: https://support.arm.com/documentation/ihi0088/j/
 
 Components in SMMUv3 interface:
@@ -45,4 +46,76 @@ DTI interconnect:
 	Token and states are responsibility of the endpoints
 	Interconnect must mantain ordering, atleast for a transactions, and for transactions in same channel, but not sure among different channels
 	
+DTI Channel Lifecycle:
 
+	Master sends the REQ and TCU send the ACK
+
+  ┌──────────────┐   CONDIS_REQ (STATE=1)   ┌─────────────┐
+  │ DISCONNECTED │ ───────────────────────► │ REQ_CONNECT │
+  └──────────────┘                          └─────────────┘
+          ▲                                        │
+          │ CONDIS_ACK (STATE=0)                   │ CONDIS_ACK (STATE=1)
+          │                                        ▼
+  ┌─────────────────┐ CONDIS_REQ (STATE=0)  ┌───────────┐
+  │ REQ_DISCONNECT  │ ◄──────────────────── │ CONNECTED │
+  └─────────────────┘                       └───────────┘
+	
+	This sequence is performed for enablling a channel, when TBU swithces from power down state or goes to it, this connection is required
+	The request contains other parameters like the TBU version, credit bargains, power domains, stages etc
+	Both agree for common parameters supported by both or the TCU declines the channel connection request
+
+	Token Credits
+		During connection request, it s decided how many trans credits and invalidation credits are supported
+		These are like telling number of OTs, bina response aaye kitne request bhej sakte hai
+		Jab disconnect state me jaana ho to saare responses wapas ayange fir disconnect ka request	
+Message Groups:
+	Connection
+	Translation
+	Synchronisation:  Complete previous responses
+	Invalidation: remove the entry from cache
+	Register Access
+	PCIE/ATS
+
+Message Flows:
+	Translation:
+
+Address translation Flow
+Device transaction
+        |
+        v
+       TBU
+        |
+        | TLB/cache lookup
+        |
+   +----+----+
+   |         |
+  Hit       Miss
+   |         |
+   v         v
+Translate   DTITBUTRANSREQ
+locally          |
+                 v
+                TCU
+                 |
+       Translation-table walk,
+       permission and fault checks
+                 |
+       +---------+---------+
+       |                   |
+   Success               Fault
+       |                   |
+       v                   v
+DTITBUTRANSRESP     DTITBUTRANSFAULT
+       |                   |
+       +---------+---------+
+                 |
+                 v
+                TBU
+                 |
+        Cache/use result
+                 |
+                 v
+       Issue translated transaction
+
+
+		
