@@ -54,7 +54,7 @@ DTI Channel Lifecycle:
   │ DISCONNECTED │ ───────────────────────► │ REQ_CONNECT │
   └──────────────┘                          └─────────────┘
           ▲                                        │
-          │ CONDIS_ACK (STATE=0)                   │ CONDIS_ACK (STATE=1)
+          │ CONDIS_ACK (STATE=0)                   │ CONDIS_ACK (STATE=1) (State can be 0 meaning reject the request)
           │                                        ▼
   ┌─────────────────┐ CONDIS_REQ (STATE=0)  ┌───────────┐
   │ REQ_DISCONNECT  │ ◄──────────────────── │ CONNECTED │
@@ -118,4 +118,45 @@ DTITBUTRANSRESP     DTITBUTRANSFAULT
        Issue translated transaction
 
 
-		
+Translation Request:
+	When the translation is not present in the cache of TBU, it sends a transaltion request to TCU
+	The request mentions the address which needs to be transalted, this request uses one credit if the tbu
+	The request contains other parameters like translation ID, security attributes, stream and substream id
+	when the tcu responds to this address, it tells the translated address and for what adddress range this translation is valid using Trans Range
+	This trans range is the space which has all those stream/subtream/security features same
+
+Stream ID/Substream Id:
+	Identifies the stream and substream of which the transaction is part of, ie tell that it comes from GPU(SID) and then which GPU core(SSID)
+	That particular page table would be used then
+	But then for axi transaction this information also needs to be communicated
+	Done using Untranslated Transaction signalling, present in AXI interface if Untranslated Transaction is v2
+
+MMU signals in AXI and corresponding in DTI
+	AxMMUSID: Stream Identifier or SID in DTI
+	AxMMUSSIDV: SSIDV-> Substream is valid for this transaction
+	AxMMUSSID: SSID Substream Id
+	AxMMUFLOW: 2 bits signal to tell how should faults be handled
+	RESP:  BRESP and RRESP contain rsp opcode for Translation fault as well
+        MMUV signal in DTI:  There is no corresponding in AXI, this tells if translation should be performed or only GPC check need to be performed	
+
+FLOW:
+	This tells how are faults handled:
+		STALL: the device tells that stall are accepted, so if TCU does not find the address, it does it routine to bring it from DDR and translation is stalled till then
+		NO STALL: Stall cannot be tolerated, fault is given
+		PRI: PCIE related, PCIE endpoint asks OS to fill the RAM with translated address, TCU returs fault from its end
+		ATST:  Address was already translated, not the normal translation fault, translation alrady occured
+
+MMUV:	
+	Tells whether translations need to be performed or only granule protection checks need to be performed
+	During channel sonncetion itself there is a STAGES filed which tells what all values of MMUV are permitted
+		STAGES=M  MMUV should be 1 only
+		STAGES=G  Only GPC, MMUV=0
+		STAGES=GM  Both are allowed	
+	
+GPC:
+	Granule Protection Checks
+	Memory is divided into granules and GP Tables tell which part is in which security domain
+	GP fault is raised if a device with one acces tries to acces that of higher access
+	There are other persmissions like read write permissions etc, they dont come under gpc, they come from PERM
+
+
