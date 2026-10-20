@@ -1,0 +1,56 @@
+Source: AXI4 AXI5 PDF
+https://notebook.google.com/notebook/f174ce8a-119a-42bd-9daa-6cfd78294cd0
+
+Signals responsible:
+	AxCache ->  4 bit signal, each bit has a significance
+
+	AxCache[0]: Bufferable
+		Whether the transactions response can be returned from a intermediate buffer or not:
+		When this bit is 1, write response can come from interconnect/cache
+		When Read operation its modifiable: read data can come from cache or from a previous write allocate
+		Otherwise the reponse should come from the final destination
+
+	AxCache[1]: Modifiable:
+		Whether the transaction can be split merged modified by the interconnect 
+		This is necessary but not sufficient if cache has to be used in transactions
+
+	ArCache[2]: Read Allocate, AwCache[2]: Other allocate
+	ArCache[3]: Other allocate, AwCache[3]: Write allocate
+		If this transaction should be stored in the cache or can this be taken from the cache and not from final destination
+
+	Combinations of these bits create various types of memory attributes
+
+Types of Memory based on these combinations:
+	Device Type: When modifiable is set to 0, it 000X
+		Can be bufferable or not bufferable in case of write
+		Both are same for reads
+		Transactions cannot be modified, should travel as they are sent
+
+	Normal Type: When modifiable is 1 but No Cache Alloc: 001X
+		Can be bufferable or not, no cache hints
+		But interconnect can modify, read response can come from previous write
+
+	Cacheable transactions: AxCache[3]|AxCache[4], XX1X: Transactions should be looked in cache before going to final destination
+	Write Through:  XX10
+		Buffer can be used but, whenever there is transactions, data should be written to the final destination
+	Write Back: XX11
+		Data need not be written back to the final destination
+
+	Write Allocate: AwCache: 1X1X
+		Write Transactions should be stored in cache
+	Read Allocate: ArCache: X11X
+		Read Transactions should be stored in cache
+	No Allocate: AwCache 011X ArCache 101X
+		Transactions should not be allocated but cache lookup should be there
+
+
+	
+Domain signal:
+	For cache transactions, for coherency which all cache should be considered
+	Signal responsible: AxDomain[1:0]
+	4 possible values
+	Inner Cacheable (not supported now)
+	Outer Cacheable	or Shareable: masters belonging to that domain
+	Non shareable 	Private to initiating master only, no snoop requests sent
+	System domain-> All coherent non coherent masters
+			
